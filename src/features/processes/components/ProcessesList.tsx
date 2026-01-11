@@ -11,6 +11,7 @@ import { ProcessesFilters, type SearchMode } from './ProcessesFilters';
 import type { ProcessesListParams, ProcessListItem as ProcessListItemType } from '../types';
 import { isCompleteProcessNumber, isValidProcessNumber } from '../utils/processNumberUtils';
 import { filterProcesses } from '../utils/filterUtils';
+import { processesApi } from '../api/processesApi';
 
 const DEBOUNCE_DELAY = 800; // 800ms delay for search to reduce API calls
 
@@ -97,10 +98,53 @@ export const ProcessesList = () => {
         }
     }, [searchMode, search, keywordSearch, processes, shouldUseApi, hasLocalFilters]);
 
-    // Extract unique tribunals from loaded processes
-    const availableTribunals = Array.from(
-        new Set(processes.map((process) => process.tribunal).filter(Boolean))
-    ).sort();
+    // Fetch all available tribunals by loading all processes (with maximum limit)
+    const [availableTribunals, setAvailableTribunals] = useState<string[]>([]);
+    const tribunalsFetchedRef = useRef(false);
+
+    useEffect(() => {
+        const fetchAllTribunals = async () => {
+            if (tribunalsFetchedRef.current) return; // Only fetch once
+            tribunalsFetchedRef.current = true;
+
+            try {
+                // Fetch with maximum limit (100) to get all tribunals
+                const response = await processesApi.list({ limit: 100 });
+                const allTribunals = new Set<string>();
+
+                // Extract tribunals from first batch
+                response.data.forEach((process) => {
+                    if (process.tribunal) {
+                        allTribunals.add(process.tribunal);
+                    }
+                });
+
+                // If there are more items, continue fetching with cursor
+                let currentCursor = response.nextCursor;
+                while (currentCursor) {
+                    const nextResponse = await processesApi.list({ limit: 100, cursor: currentCursor });
+                    nextResponse.data.forEach((process) => {
+                        if (process.tribunal) {
+                            allTribunals.add(process.tribunal);
+                        }
+                    });
+                    currentCursor = nextResponse.nextCursor;
+                }
+
+                setAvailableTribunals(Array.from(allTribunals).sort());
+            } catch (error) {
+                console.warn('Failed to fetch all tribunals, using loaded processes', error);
+                // Fallback to extracting from loaded processes
+                const tribunalsFromProcesses = Array.from(
+                    new Set(processes.map((process) => process.tribunal).filter(Boolean))
+                ).sort();
+                setAvailableTribunals(tribunalsFromProcesses);
+                tribunalsFetchedRef.current = false; // Allow retry
+            }
+        };
+
+        fetchAllTribunals();
+    }, []); // Only fetch once on mount
 
     // Border color based on theme
     const activeBorderColor = mode === 'dark' ? '#FFD700' : theme.palette.primary.main; // Gold for dark, blue for light

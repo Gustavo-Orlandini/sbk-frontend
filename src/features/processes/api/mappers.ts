@@ -33,17 +33,14 @@ export const mapApiItemToListItem = (item: ApiProcessListItem, index: number): P
         numero: item.numeroProcesso,
         tribunal: item.siglaTribunal,
         grau: mapGrau(item.grauAtual),
-        classePrincipal: item.classePrincipal,
-        assuntoPrincipal: item.assuntoPrincipal,
+        classePrincipal: item.classePrincipal || '', // Handle nullable
+        assuntoPrincipal: item.assuntoPrincipal || '', // Handle nullable
         ultimoMovimento: item.ultimoMovimento
             ? {
                 data: item.ultimoMovimento.dataHora,
                 descricao: item.ultimoMovimento.descricao,
             }
-            : {
-                data: '',
-                descricao: 'Sem movimentos registrados',
-            },
+            : null, // Return null instead of default object
     };
 };
 
@@ -74,7 +71,7 @@ const mapApiRepresentante = (representante: ApiRepresentante, index: number): Re
     return {
         id: `representante-${index}-${representante.nome}`,
         nome: representante.nome,
-        tipo: representante.tipo,
+        tipo: representante.tipo || '', // Handle nullable
     };
 };
 
@@ -83,18 +80,15 @@ const mapApiRepresentante = (representante: ApiRepresentante, index: number): Re
  */
 const mapApiParte = (parte: ApiParte, index: number): SimplifiedParte => {
     // Map polo from API to frontend type
-    // API returns: 'ativo' | 'passivo' | 'outros_participantes'
+    // API returns: 'ativo' | 'passivo' (according to OpenAPI)
     // Frontend expects: 'ATIVO' | 'PASSIVO'
-    // For 'outros_participantes', we'll map to 'ATIVO' as default, but this should be reviewed
-    // if the API provides more specific information
-    const tipo: 'ATIVO' | 'PASSIVO' =
-        parte.polo === 'ativo' ? 'ATIVO' : parte.polo === 'passivo' ? 'PASSIVO' : 'ATIVO';
+    const tipo: 'ATIVO' | 'PASSIVO' = parte.polo === 'ativo' ? 'ATIVO' : 'PASSIVO';
 
     return {
         id: `${parte.polo}-${index}-${parte.nome}`,
         nome: parte.nome,
         tipo,
-        tipoParte: parte.tipoParte,
+        tipoParte: parte.tipoParte || '', // Handle nullable
         representantes: parte.representantes.map((rep, repIndex) => mapApiRepresentante(rep, repIndex)),
     };
 };
@@ -103,14 +97,24 @@ const mapApiParte = (parte: ApiParte, index: number): SimplifiedParte => {
  * Maps API detail response to Process
  */
 export const mapApiDetailToProcess = (apiResponse: ApiProcessDetailResponse): Process => {
-    const ultimoMovimento = {
-        id: `movimento-${apiResponse.numeroProcesso}-${apiResponse.ultimoMovimento.codigo || 'last'}`,
-        data: apiResponse.ultimoMovimento.data,
-        descricao: apiResponse.ultimoMovimento.descricao,
-        tipo: apiResponse.ultimoMovimento.codigo || '',
-        orgaoJulgador: apiResponse.ultimoMovimento.orgaoJulgador,
-        codigo: apiResponse.ultimoMovimento.codigo,
-    };
+    // Handle nullable ultimoMovimento
+    const ultimoMovimento = apiResponse.ultimoMovimento
+        ? {
+            id: `movimento-${apiResponse.numeroProcesso}-${apiResponse.ultimoMovimento.codigo || 'last'}`,
+            data: apiResponse.ultimoMovimento.data,
+            descricao: apiResponse.ultimoMovimento.descricao,
+            tipo: apiResponse.ultimoMovimento.codigo || '',
+            orgaoJulgador: apiResponse.ultimoMovimento.orgaoJulgador || undefined,
+            codigo: apiResponse.ultimoMovimento.codigo || undefined,
+        }
+        : {
+            id: `movimento-${apiResponse.numeroProcesso}-last`,
+            data: '',
+            descricao: 'Sem movimentos registrados',
+            tipo: '',
+            orgaoJulgador: undefined,
+            codigo: undefined,
+        };
 
     return {
         id: apiResponse.numeroProcesso,
@@ -123,16 +127,16 @@ export const mapApiDetailToProcess = (apiResponse: ApiProcessDetailResponse): Pr
         classePrincipal: apiResponse.tramitacaoAtual.classes[0] || '',
         assuntoPrincipal: apiResponse.tramitacaoAtual.assuntos[0] || '',
         ultimoMovimento,
-        movimentos: [ultimoMovimento], // Only last movement available in current response
+        movimentos: apiResponse.ultimoMovimento ? [ultimoMovimento] : [], // Only last movement available in current response
         partes: apiResponse.partes.map((parte, index) => mapApiParte(parte, index)),
         tramitacaoAtual: {
             id: `tramitacao-${apiResponse.numeroProcesso}`,
-            local: apiResponse.tramitacaoAtual.orgaoJulgador,
+            local: apiResponse.tramitacaoAtual.orgaoJulgador || '',
             status: 'Em Tramitação', // Status derived from having current processing info
-            data: apiResponse.tramitacaoAtual.dataDistribuicao,
-            dataAutuacao: apiResponse.tramitacaoAtual.dataAutuacao,
+            data: apiResponse.tramitacaoAtual.dataDistribuicao || undefined,
+            dataAutuacao: apiResponse.tramitacaoAtual.dataAutuacao || undefined,
         },
-        dataDistribuicao: apiResponse.tramitacaoAtual.dataDistribuicao,
-        dataAutuacao: apiResponse.tramitacaoAtual.dataAutuacao,
+        dataDistribuicao: apiResponse.tramitacaoAtual.dataDistribuicao || '',
+        dataAutuacao: apiResponse.tramitacaoAtual.dataAutuacao || '',
     };
 };

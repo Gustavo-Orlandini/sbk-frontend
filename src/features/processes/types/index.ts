@@ -14,12 +14,12 @@ export interface ApiProcessListItem {
     numeroProcesso: string;
     siglaTribunal: string;
     grauAtual: 'G1' | 'G2' | 'SUP';
-    classePrincipal: string;
-    assuntoPrincipal: string;
+    classePrincipal: string | null; // object nullable according to OpenAPI
+    assuntoPrincipal: string | null; // object nullable according to OpenAPI
     ultimoMovimento: {
         dataHora: string;
         descricao: string;
-        orgaoJulgador: string;
+        orgaoJulgador: string | null; // object nullable according to OpenAPI
     } | null; // Can be null if process has no movements
     partesResumo: {
         ativo: string[];
@@ -33,31 +33,31 @@ export interface ApiProcessDetailResponse {
     nivelSigilo: number;
     tramitacaoAtual: {
         grau: 'G1' | 'G2' | 'SUP';
-        orgaoJulgador: string;
+        orgaoJulgador: string | null; // object nullable according to OpenAPI
         classes: string[];
         assuntos: string[];
-        dataDistribuicao: string;
-        dataAutuacao: string;
+        dataDistribuicao: string | null; // object nullable according to OpenAPI
+        dataAutuacao: string | null; // object nullable according to OpenAPI
     };
     partes: ApiParte[];
     ultimoMovimento: {
         data: string;
         descricao: string;
-        orgaoJulgador: string;
-        codigo: string;
-    };
+        orgaoJulgador: string | null; // object nullable according to OpenAPI
+        codigo: string | null; // object nullable according to OpenAPI
+    } | null; // nullable according to OpenAPI
 }
 
 export interface ApiParte {
     nome: string;
-    polo: 'ativo' | 'passivo' | 'outros_participantes';
-    tipoParte: string;
-    representantes: ApiRepresentante[];
+    polo: 'ativo' | 'passivo'; // According to OpenAPI, only 'ativo' or 'passivo'
+    tipoParte: string | null; // object nullable according to OpenAPI
+    representantes: ApiRepresentante[]; // Limited to 5 according to OpenAPI
 }
 
 export interface ApiRepresentante {
     nome: string;
-    tipo: string;
+    tipo: string | null; // object nullable according to OpenAPI
 }
 
 // Frontend types (simplified for UI)

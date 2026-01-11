@@ -59,16 +59,4 @@ export const processesApi = {
         }
     },
 
-    /**
-     * Get available court options (for filters)
-     * TODO: Update endpoint when available in backend
-     */
-    async getTribunais(): Promise<string[]> {
-        try {
-            const response = await apiClient.get<string[]>('/lawsuits/tribunais');
-            return response.data;
-        } catch (error) {
-            throw handleApiError(error);
-        }
-    },
 };
