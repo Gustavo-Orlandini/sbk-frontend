@@ -35,10 +35,15 @@ export const mapApiItemToListItem = (item: ApiProcessListItem, index: number): P
         grau: mapGrau(item.grauAtual),
         classePrincipal: item.classePrincipal,
         assuntoPrincipal: item.assuntoPrincipal,
-        ultimoMovimento: {
-            data: item.ultimoMovimento.dataHora,
-            descricao: item.ultimoMovimento.descricao,
-        },
+        ultimoMovimento: item.ultimoMovimento
+            ? {
+                data: item.ultimoMovimento.dataHora,
+                descricao: item.ultimoMovimento.descricao,
+            }
+            : {
+                data: '',
+                descricao: 'Sem movimentos registrados',
+            },
     };
 };
 
@@ -50,10 +55,15 @@ export const mapProcessesListResponse = (
 ): ProcessesListResponse => {
     const data = apiResponse.items.map((item, index) => mapApiItemToListItem(item, index));
 
+    // hasMore is true if there is a nextCursor (explicit pagination indicator from API)
+    // If nextCursor exists, there are definitely more items
+    // If nextCursor is undefined/null, there are no more items
+    const hasMore = !!apiResponse.nextCursor;
+
     return {
         data,
         nextCursor: apiResponse.nextCursor,
-        hasMore: !!apiResponse.nextCursor,
+        hasMore,
     };
 };
 
@@ -72,10 +82,18 @@ const mapApiRepresentante = (representante: ApiRepresentante, index: number): Re
  * Maps API parte to SimplifiedParte
  */
 const mapApiParte = (parte: ApiParte, index: number): SimplifiedParte => {
+    // Map polo from API to frontend type
+    // API returns: 'ativo' | 'passivo' | 'outros_participantes'
+    // Frontend expects: 'ATIVO' | 'PASSIVO'
+    // For 'outros_participantes', we'll map to 'ATIVO' as default, but this should be reviewed
+    // if the API provides more specific information
+    const tipo: 'ATIVO' | 'PASSIVO' =
+        parte.polo === 'ativo' ? 'ATIVO' : parte.polo === 'passivo' ? 'PASSIVO' : 'ATIVO';
+
     return {
         id: `${parte.polo}-${index}-${parte.nome}`,
         nome: parte.nome,
-        tipo: parte.polo === 'ativo' ? 'ATIVO' : parte.polo === 'passivo' ? 'PASSIVO' : 'ATIVO',
+        tipo,
         tipoParte: parte.tipoParte,
         representantes: parte.representantes.map((rep, repIndex) => mapApiRepresentante(rep, repIndex)),
     };
@@ -110,7 +128,7 @@ export const mapApiDetailToProcess = (apiResponse: ApiProcessDetailResponse): Pr
         tramitacaoAtual: {
             id: `tramitacao-${apiResponse.numeroProcesso}`,
             local: apiResponse.tramitacaoAtual.orgaoJulgador,
-            status: 'EM_TRAMITACAO',
+            status: 'Em Tramitação', // Status derived from having current processing info
             data: apiResponse.tramitacaoAtual.dataDistribuicao,
             dataAutuacao: apiResponse.tramitacaoAtual.dataAutuacao,
         },

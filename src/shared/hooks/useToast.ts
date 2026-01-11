@@ -12,8 +12,8 @@ export const useToast = () => {
         enqueueSnackbar(message, {
             variant,
             anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
+                vertical: 'bottom',
+                horizontal: 'center',
             },
             autoHideDuration: variant === 'error' ? 6000 : 4000,
         });

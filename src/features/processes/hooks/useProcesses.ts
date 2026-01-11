@@ -10,6 +10,7 @@ interface UseProcessesReturn {
     error: ApiError | null;
     hasMore: boolean;
     nextCursor?: string;
+    currentLimit?: number; // Expose current limit being used
     loadMore: () => void;
     refetch: (params?: ProcessesListParams) => void;
     reset: () => void;
@@ -102,6 +103,7 @@ export const useProcesses = (initialParams?: ProcessesListParams): UseProcessesR
         error,
         hasMore,
         nextCursor,
+        currentLimit: currentParams?.limit, // Expose current limit
         loadMore,
         refetch,
         reset,

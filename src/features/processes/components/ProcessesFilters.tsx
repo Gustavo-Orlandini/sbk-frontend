@@ -30,6 +30,7 @@ const GRAU_OPTIONS = [
     { value: '', label: 'Todos' },
     { value: 'PRIMEIRO', label: 'Primeiro Grau' },
     { value: 'SEGUNDO', label: 'Segundo Grau' },
+    { value: 'SUPERIOR', label: 'Superior' },
 ];
 
 interface ProcessesFiltersProps {
@@ -133,8 +134,8 @@ export const ProcessesFilters = ({
                             onSearchModeChange(newMode);
                         }}
                     >
-                        <FormControlLabel value="simple" control={<Radio />} label="Busca Simples (Local)" />
-                        <FormControlLabel value="advanced" control={<Radio />} label="Busca Avançada (API)" />
+                        <FormControlLabel value="simple" control={<Radio />} label="Busca Simples" />
+                        <FormControlLabel value="advanced" control={<Radio />} label="Busca Avançada" />
                     </RadioGroup>
                 </FormControl>
             </Paper>
@@ -302,8 +303,8 @@ export const ProcessesFilters = ({
                                     const selectedValue = e.target.value;
                                     if (selectedValue === '') {
                                         onGrauChange('');
-                                    } else if (selectedValue === 'PRIMEIRO' || selectedValue === 'SEGUNDO') {
-                                        onGrauChange(selectedValue as 'PRIMEIRO' | 'SEGUNDO');
+                                    } else if (selectedValue === 'PRIMEIRO' || selectedValue === 'SEGUNDO' || selectedValue === 'SUPERIOR') {
+                                        onGrauChange(selectedValue as 'PRIMEIRO' | 'SEGUNDO' | 'SUPERIOR');
                                     }
                                 }}
                                 MenuProps={{
@@ -464,8 +465,8 @@ export const ProcessesFilters = ({
                                     const selectedValue = e.target.value;
                                     if (selectedValue === '') {
                                         onAdvancedGrauChange('');
-                                    } else if (selectedValue === 'PRIMEIRO' || selectedValue === 'SEGUNDO') {
-                                        onAdvancedGrauChange(selectedValue as 'PRIMEIRO' | 'SEGUNDO');
+                                    } else if (selectedValue === 'PRIMEIRO' || selectedValue === 'SEGUNDO' || selectedValue === 'SUPERIOR') {
+                                        onAdvancedGrauChange(selectedValue as 'PRIMEIRO' | 'SEGUNDO' | 'SUPERIOR');
                                     }
                                 }}
                                 MenuProps={{

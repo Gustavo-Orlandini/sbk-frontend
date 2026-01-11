@@ -19,8 +19,15 @@ export const processesApi = {
      */
     async list(params: ProcessesListParams = {}): Promise<ProcessesListResponse> {
         try {
-            // Convert grau from PRIMEIRO/SEGUNDO to G1/G2 for API
-            const grauApi = params.grau === 'PRIMEIRO' ? 'G1' : params.grau === 'SEGUNDO' ? 'G2' : undefined;
+            // Convert grau from PRIMEIRO/SEGUNDO/SUPERIOR to G1/G2/SUP for API
+            const grauApi =
+                params.grau === 'PRIMEIRO'
+                    ? 'G1'
+                    : params.grau === 'SEGUNDO'
+                        ? 'G2'
+                        : params.grau === 'SUPERIOR'
+                            ? 'SUP'
+                            : undefined;
 
             // Build params object according to backend contract
             // Query params: q, tribunal, grau, limit, cursor

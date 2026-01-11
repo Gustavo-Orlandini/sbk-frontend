@@ -20,7 +20,7 @@ export interface ApiProcessListItem {
         dataHora: string;
         descricao: string;
         orgaoJulgador: string;
-    };
+    } | null; // Can be null if process has no movements
     partesResumo: {
         ativo: string[];
         passivo: string[];
@@ -121,7 +121,7 @@ export interface ProcessListItem {
     ultimoMovimento: {
         data: string;
         descricao: string;
-    };
+    } | null; // Can be null if process has no movements
 }
 
 export interface ProcessesListParams {

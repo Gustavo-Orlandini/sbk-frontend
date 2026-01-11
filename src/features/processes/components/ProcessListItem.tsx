@@ -1,6 +1,7 @@
 import { Card, CardContent, Typography, Box, Chip } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import type { ProcessListItem as ProcessListItemType } from '../types';
+import { formatDateOnly } from '../utils/dateUtils';
 
 interface ProcessListItemProps {
     process: ProcessListItemType;
@@ -12,14 +13,6 @@ export const ProcessListItem = ({ process }: ProcessListItemProps) => {
     const handleClick = () => {
         // Use case number (numero) for navigation since API uses caseNumber
         navigate(`/processos/${process.numero}`);
-    };
-
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('pt-BR', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-        });
     };
 
     return (
@@ -42,7 +35,13 @@ export const ProcessListItem = ({ process }: ProcessListItemProps) => {
                     <Chip
                         label={process.grau}
                         size="small"
-                        color={process.grau === 'PRIMEIRO' ? 'primary' : 'secondary'}
+                        color={
+                            process.grau === 'PRIMEIRO'
+                                ? 'primary'
+                                : process.grau === 'SEGUNDO'
+                                    ? 'secondary'
+                                    : 'warning' // SUPERIOR uses warning color (orange/amber)
+                        }
                     />
                 </Box>
 
@@ -86,7 +85,7 @@ export const ProcessListItem = ({ process }: ProcessListItemProps) => {
                             Último movimento:
                         </Typography>
                         <Typography variant="body2" fontWeight="medium">
-                            {formatDate(process.ultimoMovimento.data)} - {process.ultimoMovimento.descricao}
+                            {formatDateOnly(process.ultimoMovimento.data)} - {process.ultimoMovimento.descricao}
                         </Typography>
                     </Box>
                 )}

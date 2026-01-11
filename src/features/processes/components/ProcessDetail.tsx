@@ -17,6 +17,7 @@ import { useProcess } from '../hooks/useProcess';
 import { LoadingSpinner } from '@/shared/components/LoadingSpinner';
 import { ErrorState } from '@/shared/components/ErrorState';
 import type { SimplifiedParte } from '../types';
+import { formatDate } from '../utils/dateUtils';
 
 interface ProcessDetailProps {
     id: string; // caseNumber from route
@@ -80,16 +81,6 @@ export const ProcessDetail = ({ id }: ProcessDetailProps) => {
         return null;
     }
 
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('pt-BR', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-        });
-    };
-
     const ultimoMovimento = process.movimentos && process.movimentos.length > 0
         ? process.movimentos[process.movimentos.length - 1]
         : process.ultimoMovimento;
@@ -115,7 +106,13 @@ export const ProcessDetail = ({ id }: ProcessDetailProps) => {
                     </Box>
                     <Chip
                         label={process.grau}
-                        color={process.grau === 'PRIMEIRO' ? 'primary' : process.grau === 'SEGUNDO' ? 'secondary' : 'default'}
+                        color={
+                            process.grau === 'PRIMEIRO'
+                                ? 'primary'
+                                : process.grau === 'SEGUNDO'
+                                    ? 'secondary'
+                                    : 'warning' // SUPERIOR uses warning color (orange/amber)
+                        }
                     />
                 </Box>
 
