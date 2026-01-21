@@ -7,7 +7,6 @@ const removeNonNumeric = (value: string): string => {
 
 export const applyProcessNumberMask = (value: string): string => {
     const numbers = removeNonNumeric(value);
-
     const maxLength = 20;
     const limitedNumbers = numbers.slice(0, maxLength);
 
