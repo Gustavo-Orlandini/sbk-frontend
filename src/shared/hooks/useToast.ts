@@ -1,8 +1,3 @@
-/**
- * Custom hook for toast notifications
- * Provides a simple interface for showing success, error, warning, and info messages
- */
-
 import { useSnackbar, VariantType } from 'notistack';
 
 export const useToast = () => {

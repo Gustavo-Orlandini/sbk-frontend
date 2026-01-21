@@ -5,11 +5,6 @@ interface ThemeToggleProps {
     mode: 'light' | 'dark';
     onToggle: () => void;
 }
-
-/**
- * Theme toggle button component
- * Allows users to switch between light and dark modes
- */
 export const ThemeToggle = ({ mode, onToggle }: ThemeToggleProps) => {
     return (
         <Tooltip title={mode === 'light' ? 'Ativar tema escuro' : 'Ativar tema claro'}>

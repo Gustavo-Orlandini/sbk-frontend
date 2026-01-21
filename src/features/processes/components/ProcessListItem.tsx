@@ -11,7 +11,6 @@ export const ProcessListItem = ({ process }: ProcessListItemProps) => {
     const navigate = useNavigate();
 
     const handleClick = () => {
-        // Use case number (numero) for navigation since API uses caseNumber
         navigate(`/processos/${process.numero}`);
     };
 
@@ -40,7 +39,7 @@ export const ProcessListItem = ({ process }: ProcessListItemProps) => {
                                 ? 'primary'
                                 : process.grau === 'SEGUNDO'
                                     ? 'secondary'
-                                    : 'warning' // SUPERIOR uses warning color (orange/amber)
+                                    : 'warning'
                         }
                     />
                 </Box>

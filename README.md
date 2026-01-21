@@ -437,14 +437,12 @@ LawsuitDetailDto {
 
 O frontend mapeia as respostas da API para:
 ```typescript
-// Lista
 {
   data: ProcessListItem[],
   nextCursor?: string,
   hasMore: boolean // Calculado baseado em nextCursor
 }
 
-// Detalhe
 Process {
   // Campos mapeados com tratamento de valores nullable
   // Campos nullable convertidos para strings vazias ou undefined quando apropriado
@@ -504,22 +502,6 @@ A arquitetura facilita:
 - **Exports**: Named exports preferidos
 - **Hooks**: Todos os hooks seguem a convenção `use*`
 
-## 📚 Boas Práticas Seguidas
-
-✅ Separação clara de responsabilidades
-✅ Componentes de apresentação sem lógica de negócio
-✅ Hooks para lógica reutilizável
-✅ Tipagem forte em toda aplicação
-✅ Tratamento explícito de estados (loading, error, empty)
-✅ API client centralizado
-✅ Variáveis de ambiente para configuração
-✅ Código limpo e legível
-✅ Estrutura escalável
-✅ Utilitários organizados por responsabilidade
-✅ Mappers para transformação de dados
-✅ Debounce para otimização de requisições
-✅ Validação de entrada do usuário
-✅ Feedback visual claro (bordas ativas, chips coloridos)
 
 
 ---

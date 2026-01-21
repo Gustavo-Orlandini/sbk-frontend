@@ -8,18 +8,9 @@ import type {
 } from '../types';
 import { mapProcessesListResponse, mapApiDetailToProcess } from './mappers';
 
-/**
- * API Client for legal processes
- * All calls must follow the contract defined in Swagger
- */
-
 export const processesApi = {
-    /**
-     * List processes with filters and cursor-based pagination
-     */
     async list(params: ProcessesListParams = {}): Promise<ProcessesListResponse> {
         try {
-            // Convert grau from PRIMEIRO/SEGUNDO/SUPERIOR to G1/G2/SUP for API
             const grauApi =
                 params.grau === 'PRIMEIRO'
                     ? 'G1'
@@ -29,8 +20,6 @@ export const processesApi = {
                             ? 'SUP'
                             : undefined;
 
-            // Build params object according to backend contract
-            // Query params: q, tribunal, grau, limit, cursor
             const apiParams: Record<string, string | number> = {};
             if (params.q) apiParams.q = params.q;
             if (params.tribunal) apiParams.tribunal = params.tribunal;
@@ -47,9 +36,6 @@ export const processesApi = {
         }
     },
 
-    /**
-     * Get a specific process by case number
-     */
     async getByCaseNumber(caseNumber: string): Promise<Process> {
         try {
             const response = await apiClient.get<ApiProcessDetailResponse>(`/lawsuits/${caseNumber}`);

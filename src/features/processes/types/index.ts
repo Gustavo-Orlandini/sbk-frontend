@@ -1,10 +1,3 @@
-/**
- * Types based on API DTOs
- * These types must reflect exactly the contracts defined in Swagger/OpenAPI
- * The backend already transforms the data, so these are the final DTOs
- */
-
-// Raw API response types
 export interface ApiProcessesListResponse {
     items: ApiProcessListItem[];
     nextCursor?: string;
@@ -14,13 +7,13 @@ export interface ApiProcessListItem {
     numeroProcesso: string;
     siglaTribunal: string;
     grauAtual: 'G1' | 'G2' | 'SUP';
-    classePrincipal: string | null; // object nullable according to OpenAPI
-    assuntoPrincipal: string | null; // object nullable according to OpenAPI
+    classePrincipal: string | null;
+    assuntoPrincipal: string | null;
     ultimoMovimento: {
         dataHora: string;
         descricao: string;
-        orgaoJulgador: string | null; // object nullable according to OpenAPI
-    } | null; // Can be null if process has no movements
+        orgaoJulgador: string | null;
+    } | null;
     partesResumo: {
         ativo: string[];
         passivo: string[];
@@ -33,48 +26,46 @@ export interface ApiProcessDetailResponse {
     nivelSigilo: number;
     tramitacaoAtual: {
         grau: 'G1' | 'G2' | 'SUP';
-        orgaoJulgador: string | null; // object nullable according to OpenAPI
+        orgaoJulgador: string | null;
         classes: string[];
         assuntos: string[];
-        dataDistribuicao: string | null; // object nullable according to OpenAPI
-        dataAutuacao: string | null; // object nullable according to OpenAPI
+        dataDistribuicao: string | null;
+        dataAutuacao: string | null;
     };
     partes: ApiParte[];
     ultimoMovimento: {
         data: string;
         descricao: string;
-        orgaoJulgador: string | null; // object nullable according to OpenAPI
-        codigo: string | null; // object nullable according to OpenAPI
-    } | null; // nullable according to OpenAPI
+        orgaoJulgador: string | null;
+        codigo: string | null;
+    } | null;
 }
 
 export interface ApiParte {
     nome: string;
-    polo: 'ativo' | 'passivo'; // According to OpenAPI, only 'ativo' or 'passivo'
-    tipoParte: string | null; // object nullable according to OpenAPI
-    representantes: ApiRepresentante[]; // Limited to 5 according to OpenAPI
+    polo: 'ativo' | 'passivo';
+    tipoParte: string | null;
+    representantes: ApiRepresentante[];
 }
 
 export interface ApiRepresentante {
     nome: string;
-    tipo: string | null; // object nullable according to OpenAPI
+    tipo: string | null;
 }
-
-// Frontend types (simplified for UI)
 export interface Movimento {
     id: string;
     data: string;
     descricao: string;
-    tipo: string; // código do movimento
+    tipo: string;
     orgaoJulgador?: string;
     codigo?: string;
 }
 
 export interface Tramitacao {
     id: string;
-    local: string; // orgaoJulgador
+    local: string;
     status: string;
-    data?: string; // dataDistribuicao
+    data?: string;
     dataAutuacao?: string;
 }
 
@@ -86,8 +77,8 @@ export interface Process {
     grau: 'PRIMEIRO' | 'SEGUNDO' | 'SUPERIOR';
     classes: string[];
     assuntos: string[];
-    classePrincipal: string; // First class for backward compatibility
-    assuntoPrincipal: string; // First subject for backward compatibility
+    classePrincipal: string;
+    assuntoPrincipal: string;
     ultimoMovimento: Movimento;
     movimentos: Movimento[];
     partes: SimplifiedParte[];
@@ -100,7 +91,7 @@ export interface SimplifiedParte {
     id: string;
     nome: string;
     tipo: 'ATIVO' | 'PASSIVO';
-    tipoParte: string; // e.g., "APELADO", "APELANTE", "AUTOR", "RÉU/RÉ"
+    tipoParte: string;
     representantes: Representante[];
     documento?: string;
 }
@@ -108,7 +99,7 @@ export interface SimplifiedParte {
 export interface Representante {
     id: string;
     nome: string;
-    tipo: string; // e.g., "ADVOGADO"
+    tipo: string;
 }
 
 export interface ProcessListItem {
@@ -121,18 +112,16 @@ export interface ProcessListItem {
     ultimoMovimento: {
         data: string;
         descricao: string;
-    } | null; // Can be null if process has no movements
+    } | null;
 }
 
 export interface ProcessesListParams {
-    q?: string; // Textual search (number, parties, class, subject)
+    q?: string;
     tribunal?: string;
     grau?: 'PRIMEIRO' | 'SEGUNDO' | 'SUPERIOR';
     cursor?: string;
     limit?: number;
 }
-
-// Frontend response structure (after mapping)
 export interface ProcessesListResponse {
     data: ProcessListItem[];
     nextCursor?: string;

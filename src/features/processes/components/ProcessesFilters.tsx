@@ -34,11 +34,8 @@ const GRAU_OPTIONS = [
 ];
 
 interface ProcessesFiltersProps {
-    // Search mode
     searchMode: SearchMode;
     onSearchModeChange: (mode: SearchMode) => void;
-
-    // Simple search state
     keywordSearch: string;
     onKeywordSearchChange: (value: string) => void;
     search: string;
@@ -48,23 +45,15 @@ interface ProcessesFiltersProps {
     onTribunalChange: (value: string) => void;
     grau: ProcessesListParams['grau'] | '';
     onGrauChange: (value: ProcessesListParams['grau'] | '') => void;
-
-    // Advanced search state
     advancedQuery: string;
     onAdvancedQueryChange: (value: string) => void;
     advancedTribunal: string;
     onAdvancedTribunalChange: (value: string) => void;
     advancedGrau: ProcessesListParams['grau'] | '';
     onAdvancedGrauChange: (value: ProcessesListParams['grau'] | '') => void;
-
-    // Actions
     onClear: () => void;
     onAdvancedSearch: () => void;
-
-    // Data
     availableTribunals: string[];
-
-    // UI
     loading: boolean;
     activeBorderColor: string;
 }
@@ -111,7 +100,6 @@ export const ProcessesFilters = ({
         [onAdvancedSearch]
     );
 
-    // Check if filters are active
     const isKeywordSearchActive = !!keywordSearch.trim();
     const isProcessNumberSearchActive = !!search.trim();
     const isTribunalFilterActive = !!tribunal;
@@ -122,7 +110,6 @@ export const ProcessesFilters = ({
 
     return (
         <Stack spacing={3} mb={4}>
-            {/* Search Mode Selection */}
             <Paper elevation={1} sx={{ p: 2 }}>
                 <FormControl component="fieldset">
                     <FormLabel component="legend">Modo de Busca</FormLabel>
@@ -142,7 +129,6 @@ export const ProcessesFilters = ({
 
             {searchMode === 'simple' ? (
                 <>
-                    {/* Simple Search Mode */}
                     <Box>
                         <TextField
                             fullWidth
@@ -346,7 +332,6 @@ export const ProcessesFilters = ({
                 </>
             ) : (
                 <>
-                    {/* Advanced Search Mode */}
                     <Box>
                         <TextField
                             fullWidth

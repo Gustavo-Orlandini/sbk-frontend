@@ -1,7 +1,3 @@
-/**
- * Filter utilities for processes
- */
-
 import type { ProcessListItem } from '../types';
 import { isCompleteProcessNumber, isValidProcessNumber } from './processNumberUtils';
 
@@ -11,11 +7,6 @@ export interface FilterProcessesParams {
     keywordSearch?: string;
 }
 
-/**
- * Filters processes by process number and/or keyword search
- * @param params - Filter parameters
- * @returns Filtered list of processes
- */
 export const filterProcesses = ({
     processList,
     search = '',
@@ -23,7 +14,6 @@ export const filterProcesses = ({
 }: FilterProcessesParams): ProcessListItem[] => {
     let filtered = processList;
 
-    // Filter by process number if complete and valid
     if (isCompleteProcessNumber(search) && isValidProcessNumber(search)) {
         const searchNormalized = search.trim().toLowerCase();
         filtered = filtered.filter((process) =>
@@ -31,11 +21,9 @@ export const filterProcesses = ({
         );
     }
 
-    // Filter by keyword search (searches in multiple fields)
     if (keywordSearch.trim()) {
         const keywordNormalized = keywordSearch.trim().toLowerCase();
         filtered = filtered.filter((process) => {
-            // Search in multiple fields
             const searchableText = [
                 process.numero,
                 process.tribunal,

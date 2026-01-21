@@ -26,7 +26,6 @@ export const handleApiError = (error: unknown): ApiError => {
     if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError<{ message?: string | string[] }>;
 
-        // Handle array of messages (validation errors)
         let errorMessage: string;
         if (Array.isArray(axiosError.response?.data?.message)) {
             errorMessage = axiosError.response.data.message.join('. ');

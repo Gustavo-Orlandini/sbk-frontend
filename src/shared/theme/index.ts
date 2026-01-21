@@ -1,8 +1,5 @@
 import { createTheme, ThemeOptions } from '@mui/material/styles';
 
-/**
- * Professional color palette for Light theme
- */
 const lightPalette: ThemeOptions['palette'] = {
     mode: 'light',
     primary: {
@@ -47,9 +44,6 @@ const lightPalette: ThemeOptions['palette'] = {
     },
 };
 
-/**
- * Professional color palette for Dark theme
- */
 const darkPalette: ThemeOptions['palette'] = {
     mode: 'dark',
     primary: {
@@ -94,9 +88,6 @@ const darkPalette: ThemeOptions['palette'] = {
     },
 };
 
-/**
- * Common theme configuration
- */
 const commonThemeOptions: ThemeOptions = {
     typography: {
         fontFamily: [
@@ -149,17 +140,11 @@ const commonThemeOptions: ThemeOptions = {
     },
 };
 
-/**
- * Create light theme
- */
 export const lightTheme = createTheme({
     ...commonThemeOptions,
     palette: lightPalette,
 });
 
-/**
- * Create dark theme
- */
 export const darkTheme = createTheme({
     ...commonThemeOptions,
     palette: darkPalette,
@@ -175,7 +160,4 @@ export const darkTheme = createTheme({
     },
 });
 
-/**
- * Default theme (light)
- */
 export const theme = lightTheme;

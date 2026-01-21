@@ -20,27 +20,24 @@ import type { SimplifiedParte } from '../types';
 import { formatDate } from '../utils/dateUtils';
 
 interface ProcessDetailProps {
-    id: string; // caseNumber from route
+    id: string;
 }
 
 export const ProcessDetail = ({ id }: ProcessDetailProps) => {
-    // id is actually the caseNumber (numero do processo)
     const { process, loading, error, refetch } = useProcess(id);
     const [pageAtivo, setPageAtivo] = useState(1);
     const [pagePassivo, setPagePassivo] = useState(1);
     const [itemsPerPageAtivo, setItemsPerPageAtivo] = useState(10);
     const [itemsPerPagePassivo, setItemsPerPagePassivo] = useState(10);
+    const partesAtivasRaw = process?.partes?.filter((p) => p.tipo === 'ATIVO') || [];
+    const partesPassivasRaw = process?.partes?.filter((p) => p.tipo === 'PASSIVO') || [];
 
-    // Sort and paginate partes
     const sortAndPaginatePartes = (
         partes: SimplifiedParte[],
         page: number,
         itemsPerPage: number
     ) => {
-        // Sort alphabetically by nome
         const sorted = [...partes].sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
-
-        // Calculate pagination
         const startIndex = (page - 1) * itemsPerPage;
         const endIndex = startIndex + itemsPerPage;
         const paginated = sorted.slice(startIndex, endIndex);
@@ -53,11 +50,6 @@ export const ProcessDetail = ({ id }: ProcessDetailProps) => {
         };
     };
 
-    // Prepare data for useMemo - use empty arrays if process is not loaded yet
-    const partesAtivasRaw = process?.partes?.filter((p) => p.tipo === 'ATIVO') || [];
-    const partesPassivasRaw = process?.partes?.filter((p) => p.tipo === 'PASSIVO') || [];
-
-    // ALL HOOKS MUST BE CALLED BEFORE ANY EARLY RETURNS
     const partesAtivasPaginated = useMemo(
         () => sortAndPaginatePartes(partesAtivasRaw, pageAtivo, itemsPerPageAtivo),
         [partesAtivasRaw, pageAtivo, itemsPerPageAtivo]
@@ -68,7 +60,6 @@ export const ProcessDetail = ({ id }: ProcessDetailProps) => {
         [partesPassivasRaw, pagePassivo, itemsPerPagePassivo]
     );
 
-    // Now we can do early returns
     if (loading) {
         return <LoadingSpinner message="Carregando detalhes do processo..." />;
     }
@@ -87,7 +78,6 @@ export const ProcessDetail = ({ id }: ProcessDetailProps) => {
 
     return (
         <Box>
-            {/* Cabeçalho do Processo */}
             <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
                 <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={2}>
                     <Box>
@@ -111,7 +101,7 @@ export const ProcessDetail = ({ id }: ProcessDetailProps) => {
                                 ? 'primary'
                                 : process.grau === 'SEGUNDO'
                                     ? 'secondary'
-                                    : 'warning' // SUPERIOR uses warning color (orange/amber)
+                                    : 'warning'
                         }
                     />
                 </Box>
@@ -174,7 +164,6 @@ export const ProcessDetail = ({ id }: ProcessDetailProps) => {
                 </Grid>
             </Paper>
 
-            {/* Último Movimento - Destaque */}
             {ultimoMovimento && (
                 <Paper
                     elevation={3}
@@ -213,7 +202,6 @@ export const ProcessDetail = ({ id }: ProcessDetailProps) => {
                 </Paper>
             )}
 
-            {/* Partes - Polo Ativo */}
             {partesAtivasRaw.length > 0 && (
                 <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
                     <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} flexWrap="wrap" gap={2}>
@@ -229,7 +217,7 @@ export const ProcessDetail = ({ id }: ProcessDetailProps) => {
                                     const value = Number(e.target.value);
                                     if (value >= 1 && value <= 100) {
                                         setItemsPerPageAtivo(value);
-                                        setPageAtivo(1); // Reset to first page
+                                        setPageAtivo(1);
                                     }
                                 }}
                                 inputProps={{
@@ -310,7 +298,6 @@ export const ProcessDetail = ({ id }: ProcessDetailProps) => {
                 </Paper>
             )}
 
-            {/* Partes - Polo Passivo */}
             {partesPassivasRaw.length > 0 && (
                 <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
                     <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} flexWrap="wrap" gap={2}>
@@ -326,7 +313,7 @@ export const ProcessDetail = ({ id }: ProcessDetailProps) => {
                                     const value = Number(e.target.value);
                                     if (value >= 1 && value <= 100) {
                                         setItemsPerPagePassivo(value);
-                                        setPagePassivo(1); // Reset to first page
+                                        setPagePassivo(1);
                                     }
                                 }}
                                 inputProps={{
@@ -407,7 +394,6 @@ export const ProcessDetail = ({ id }: ProcessDetailProps) => {
                 </Paper>
             )}
 
-            {/* Tramitação Atual */}
             {process.tramitacaoAtual && (
                 <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
                     <Typography variant="h6" gutterBottom fontWeight="bold">
@@ -455,7 +441,6 @@ export const ProcessDetail = ({ id }: ProcessDetailProps) => {
                 </Paper>
             )}
 
-            {/* Histórico de Movimentos */}
             {process.movimentos && Array.isArray(process.movimentos) && process.movimentos.length > 0 && (
                 <Paper elevation={2} sx={{ p: 3 }}>
                     <Typography variant="h6" gutterBottom fontWeight="bold">

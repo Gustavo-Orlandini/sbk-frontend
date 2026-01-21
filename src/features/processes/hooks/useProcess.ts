@@ -18,7 +18,6 @@ export const useProcess = (id: string | null): UseProcessReturn => {
     const { showError, showSuccess } = useToast();
     const toastRef = useRef({ showError, showSuccess });
 
-    // Keep toast refs updated
     useEffect(() => {
         toastRef.current = { showError, showSuccess };
     }, [showError, showSuccess]);
@@ -34,7 +33,6 @@ export const useProcess = (id: string | null): UseProcessReturn => {
         try {
             const data = await processesApi.getByCaseNumber(id);
             setProcess(data);
-            // Only show success toast if not silent (e.g., on manual refetch)
             if (!silent) {
                 toastRef.current.showSuccess('Processo carregado com sucesso');
             }
@@ -49,12 +47,10 @@ export const useProcess = (id: string | null): UseProcessReturn => {
     }, [id]);
 
     useEffect(() => {
-        // Silent initial load - no toast on first render
         fetchProcess(true);
     }, [fetchProcess]);
 
     const refetch = useCallback(() => {
-        // Manual refetch should show toast
         fetchProcess(false);
     }, [fetchProcess]);
 

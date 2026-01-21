@@ -27,7 +27,6 @@ export const useProcesses = (initialParams?: ProcessesListParams): UseProcessesR
     const { showError, showSuccess } = useToast();
     const toastRef = useRef({ showError, showSuccess });
 
-    // Keep toast refs updated
     useEffect(() => {
         toastRef.current = { showError, showSuccess };
     }, [showError, showSuccess]);
@@ -46,7 +45,6 @@ export const useProcesses = (initialParams?: ProcessesListParams): UseProcessesR
                 }
             } else {
                 setProcesses(response.data);
-                // Only show success toast if there are results and it's not the initial silent load
                 if (!silent && response.data.length > 0) {
                     toastRef.current.showSuccess(`${response.data.length} processo(s) encontrado(s)`);
                 }
@@ -92,7 +90,6 @@ export const useProcesses = (initialParams?: ProcessesListParams): UseProcessesR
             setInitialized(true);
             const paramsToUse = initialParams ?? {};
             setCurrentParams(paramsToUse);
-            // Silent initial load - no toast on first render
             fetchProcesses(paramsToUse, false, true);
         }
     }, [initialParams, initialized, fetchProcesses]);
@@ -103,7 +100,7 @@ export const useProcesses = (initialParams?: ProcessesListParams): UseProcessesR
         error,
         hasMore,
         nextCursor,
-        currentLimit: currentParams?.limit, // Expose current limit
+        currentLimit: currentParams?.limit,
         loadMore,
         refetch,
         reset,

@@ -8,7 +8,6 @@ interface ErrorStateProps {
 }
 
 export const ErrorState = ({ message, onRetry, onClearFilters }: ErrorStateProps) => {
-    // Extract user-friendly message
     const getFriendlyMessage = (msg: string): string => {
         if (msg.includes('property search should not exist')) {
             return 'O parâmetro de busca não é suportado pela API. Por favor, use os filtros disponíveis.';

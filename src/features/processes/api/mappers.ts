@@ -1,7 +1,3 @@
-/**
- * Mappers to convert API response to frontend types
- */
-
 import type {
     ApiProcessesListResponse,
     ApiProcessListItem,
@@ -15,46 +11,33 @@ import type {
     Representante,
 } from '../types';
 
-/**
- * Maps grauAtual (G1/G2/SUP) to frontend format (PRIMEIRO/SEGUNDO/SUPERIOR)
- */
 const mapGrau = (grauAtual: 'G1' | 'G2' | 'SUP'): 'PRIMEIRO' | 'SEGUNDO' | 'SUPERIOR' => {
     if (grauAtual === 'G1') return 'PRIMEIRO';
     if (grauAtual === 'G2') return 'SEGUNDO';
     return 'SUPERIOR';
 };
 
-/**
- * Maps API list item to ProcessListItem
- */
 export const mapApiItemToListItem = (item: ApiProcessListItem, index: number): ProcessListItem => {
     return {
         id: `${item.numeroProcesso}-${index}`,
         numero: item.numeroProcesso,
         tribunal: item.siglaTribunal,
         grau: mapGrau(item.grauAtual),
-        classePrincipal: item.classePrincipal || '', // Handle nullable
-        assuntoPrincipal: item.assuntoPrincipal || '', // Handle nullable
+        classePrincipal: item.classePrincipal || '',
+        assuntoPrincipal: item.assuntoPrincipal || '',
         ultimoMovimento: item.ultimoMovimento
             ? {
                 data: item.ultimoMovimento.dataHora,
                 descricao: item.ultimoMovimento.descricao,
             }
-            : null, // Return null instead of default object
+            : null,
     };
 };
 
-/**
- * Maps API list response to frontend list response
- */
 export const mapProcessesListResponse = (
     apiResponse: ApiProcessesListResponse
 ): ProcessesListResponse => {
     const data = apiResponse.items.map((item, index) => mapApiItemToListItem(item, index));
-
-    // hasMore is true if there is a nextCursor (explicit pagination indicator from API)
-    // If nextCursor exists, there are definitely more items
-    // If nextCursor is undefined/null, there are no more items
     const hasMore = !!apiResponse.nextCursor;
 
     return {
@@ -64,40 +47,27 @@ export const mapProcessesListResponse = (
     };
 };
 
-/**
- * Maps API representante to Representante
- */
 const mapApiRepresentante = (representante: ApiRepresentante, index: number): Representante => {
     return {
         id: `representante-${index}-${representante.nome}`,
         nome: representante.nome,
-        tipo: representante.tipo || '', // Handle nullable
+        tipo: representante.tipo || '',
     };
 };
 
-/**
- * Maps API parte to SimplifiedParte
- */
 const mapApiParte = (parte: ApiParte, index: number): SimplifiedParte => {
-    // Map polo from API to frontend type
-    // API returns: 'ativo' | 'passivo' (according to OpenAPI)
-    // Frontend expects: 'ATIVO' | 'PASSIVO'
     const tipo: 'ATIVO' | 'PASSIVO' = parte.polo === 'ativo' ? 'ATIVO' : 'PASSIVO';
 
     return {
         id: `${parte.polo}-${index}-${parte.nome}`,
         nome: parte.nome,
         tipo,
-        tipoParte: parte.tipoParte || '', // Handle nullable
+        tipoParte: parte.tipoParte || '',
         representantes: parte.representantes.map((rep, repIndex) => mapApiRepresentante(rep, repIndex)),
     };
 };
 
-/**
- * Maps API detail response to Process
- */
 export const mapApiDetailToProcess = (apiResponse: ApiProcessDetailResponse): Process => {
-    // Handle nullable ultimoMovimento
     const ultimoMovimento = apiResponse.ultimoMovimento
         ? {
             id: `movimento-${apiResponse.numeroProcesso}-${apiResponse.ultimoMovimento.codigo || 'last'}`,
@@ -127,12 +97,12 @@ export const mapApiDetailToProcess = (apiResponse: ApiProcessDetailResponse): Pr
         classePrincipal: apiResponse.tramitacaoAtual.classes[0] || '',
         assuntoPrincipal: apiResponse.tramitacaoAtual.assuntos[0] || '',
         ultimoMovimento,
-        movimentos: apiResponse.ultimoMovimento ? [ultimoMovimento] : [], // Only last movement available in current response
+        movimentos: apiResponse.ultimoMovimento ? [ultimoMovimento] : [],
         partes: apiResponse.partes.map((parte, index) => mapApiParte(parte, index)),
         tramitacaoAtual: {
             id: `tramitacao-${apiResponse.numeroProcesso}`,
             local: apiResponse.tramitacaoAtual.orgaoJulgador || '',
-            status: 'Em Tramitação', // Status derived from having current processing info
+            status: 'Em Tramitação',
             data: apiResponse.tramitacaoAtual.dataDistribuicao || undefined,
             dataAutuacao: apiResponse.tramitacaoAtual.dataAutuacao || undefined,
         },
